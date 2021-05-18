@@ -1,11 +1,13 @@
 import 'babel-polyfill';
 import * as Tone from 'tone';
+import p5 from 'p5';
 
 const startBtn = document.querySelector('#start-btn');
 const serialBtn = document.querySelector('#serial-btn');
 
 let serialState = false;
 let port, reader, inputDone, inputStream;
+let val, str;
 
 class LineBreakTransformer {
   constructor() {
@@ -83,12 +85,13 @@ async function disconnectSerial() {
   serialBtn.textContent ="Open Serial";
 }
 
-
 async function readLoop() {
   while (true) {
     const { value, done } = await reader.read();
     if (value) {
-      console.log(value );
+      str += value;
+      const lines = str.split("\n");
+      val = lines[lines.length - 2];
     }
     if (done) {
       console.log('[readLoop] DONE', done);
@@ -97,3 +100,34 @@ async function readLoop() {
     }
   }
 }
+
+const sketch = (s) => {
+  let img;
+
+  s.setup = () => {
+      s.createCanvas(900, 600);
+      img = s.loadImage("/img.png");
+  }
+
+  s.draw = () => {
+      s.background(255);
+      s.clear();
+      let tiles = val/10; //s.mouseX/10;
+      let tileSize = s.width/tiles;
+      
+      s.fill(0);
+      s.noStroke();
+      
+      for(let x = 0; x < tiles; x++){
+        for(let y = 0; y < tiles; y++){
+          let c = img.get(s.int(x*tileSize), s.int(y*tileSize));
+          let size = s.map(s.brightness(c), 0, 255, 0, 22);
+          
+          s.ellipse(x*tileSize, y*tileSize, size, size);
+        }    
+      }
+  }
+}
+
+const sketchInstance = new p5(sketch);
+
