@@ -90,8 +90,15 @@ async function readLoop() {
     const { value, done } = await reader.read();
     if (value) {
       str += value;
-      const lines = str.split("\n");
-      val = lines[lines.length - 2];
+      const lines = str.split("}");
+      const line = lines[lines.length - 2]+'}';
+      try {
+        let obj = JSON.parse(line);
+        val = obj.ptr;
+      }
+      catch(e) {
+        console.log(e);
+      }
     }
     if (done) {
       console.log('[readLoop] DONE', done);
@@ -105,27 +112,27 @@ const sketch = (s) => {
   let img;
 
   s.setup = () => {
-      s.createCanvas(900, 600);
-      img = s.loadImage("/img.png");
+     s.createCanvas(900, 600);
+    img = s.loadImage("/test.jpg");
   }
 
   s.draw = () => {
-      s.background(255);
-      s.clear();
-      let tiles = val/10; //s.mouseX/10;
-      let tileSize = s.width/tiles;
+    s.background(255);
+    s.clear();
+    let tiles = val / 10; //s.mouseX/10;
+    let tileSize = s.width/tiles;
       
-      s.fill(0);
-      s.noStroke();
+    s.fill(0);
+    s.noStroke();
       
-      for(let x = 0; x < tiles; x++){
-        for(let y = 0; y < tiles; y++){
-          let c = img.get(s.int(x*tileSize), s.int(y*tileSize));
-          let size = s.map(s.brightness(c), 0, 255, 0, 22);
-          
-          s.ellipse(x*tileSize, y*tileSize, size, size);
-        }    
-      }
+    for(let x = 0; x < tiles; x++){
+      for(let y = 0; y < tiles; y++){
+        let c = img.get(s.int(x*tileSize), s.int(y*tileSize));
+        let size = s.map(s.brightness(c), 0, 255, 0, 22);
+        
+        s.ellipse(x*tileSize, y*tileSize, size, size);
+      }    
+    }
   }
 }
 
