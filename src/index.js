@@ -1,54 +1,29 @@
 import 'babel-polyfill';
-import * as Tone from 'tone';
 import p5 from 'p5';
 
-const startBtn = document.querySelector('#start-btn');
 const serialBtn = document.querySelector('#serial-btn');
+const writeBtnOn = document.querySelector('#write-btn-on');
+const writeBtnOff = document.querySelector('#write-btn-off');
+
+const clrPicker = document.querySelector("#clr-picker");
 
 let serialState = false;
 let port, reader, inputDone, inputStream;
+let outputDone, outputStream;
 let val, str;
 
-class LineBreakTransformer {
-  constructor() {
-    // A container for holding stream data until a new line.
-    this.chunks = "";
-  }
+writeBtnOn.addEventListener('click', () => {
+  let rgb = hexToRGB(clrPicker.value);
 
-  transform(chunk, controller) {
-    // Append new chunks to existing chunks.
-    this.chunks += chunk;
-    // For each line breaks in chunks, send the parsed lines out.
-    const lines = this.chunks.split("\r\n");
-    this.chunks = lines.pop();
-    lines.forEach((line) => controller.enqueue(line));
-  }
-
-  flush(controller) {
-    // When the stream is closed, flush any remaining chunks out.
-    controller.enqueue(this.chunks);
-  }
-}
-
-startBtn.addEventListener('click', (e) => {
-    //const synth = new Tone.Synth().toDestination();
-    //synth.triggerAttackRelease("D1", "8n"); //play a middle 'C' for the duration of an 8th note
-
-    const bass = new Tone.Player("/bass.wav").toDestination();
-    const drums = new Tone.Player("/drums.wav").toDestination();
-    const other = new Tone.Player("/other.wav").toDestination();
-    
-    // effects
-    const distortion = new Tone.Distortion(0.9).toDestination();
-    bass.connect(distortion);
-
-    //
-    Tone.loaded().then(() => {
-        bass.start();
-        //drums.start();
-        //other.start();
-    });
+  const writer = outputStream.getWriter();
+  // lines.forEach((line) => {
+  //   console.log('[SEND]', line);
+  //   writer.write(line + '\n');
+  // });
+  writer.write(`${255-rgb.r},${255-rgb.g},${255-rgb.b}`);
+  writer.releaseLock();
 });
+
 
 serialBtn.addEventListener('click', async (e) => {
     console.log("Open Serial");
@@ -71,6 +46,10 @@ async function connectSerial() {
     inputStream = decoder.readable;
     reader = inputStream.getReader();
     readLoop();
+
+    const encoder = new TextEncoderStream();
+    outputDone = encoder.readable.pipeTo(port.writable);
+    outputStream = encoder.writable;
 }
 
 async function disconnectSerial() {
@@ -88,6 +67,7 @@ async function disconnectSerial() {
 async function readLoop() {
   while (true) {
     const { value, done } = await reader.read();
+    console.log(value);
     if (value) {
       str += value;
       const lines = str.split("}");
@@ -106,6 +86,15 @@ async function readLoop() {
       break;
     }
   }
+}
+
+function hexToRGB(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
 }
 
 const sketch = (s) => {
@@ -129,7 +118,7 @@ const sketch = (s) => {
       for(let y = 0; y < tiles; y++){
         let c = img.get(s.int(x*tileSize), s.int(y*tileSize));
         let size = s.map(s.brightness(c), 0, 255, 0, 22);
-        
+        //s.fill(s.random(255), s.random(255), s.random(255));
         s.ellipse(x*tileSize, y*tileSize, size, size);
       }    
     }
@@ -137,4 +126,3 @@ const sketch = (s) => {
 }
 
 const sketchInstance = new p5(sketch);
-
