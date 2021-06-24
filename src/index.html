@@ -4,18 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Media WP</title>
-    <!-- <link defer rel="stylesheet" href="./style.scss" /> -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+
   </head>
   <body>
     <header>
         <h1>Media WP</h1>
     </header>
     <main id="container">
-      <p><button id="write-btn-on">Change color</button></p>
-      <p><button id="write-btn-off">Off LED</button></p>
-
-      <p><input type="color" id="clr-picker"> </p>
+      
       <p><button id="serial-btn">Open Serial</button></p>
+<hr/>
+      <p>LED color: <input type="color" id="clr-picker"></p>
+      <p>Servo speed: <input type="range" id="sp-slider" min="0" max="10"> </p>
+      <p><button id="write-btn-on">Apply</button></p>
     </main>
     <canvas id="c"></canvas>
     <div id="loader"></div>

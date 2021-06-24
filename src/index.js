@@ -3,7 +3,6 @@ import p5 from 'p5';
 
 const serialBtn = document.querySelector('#serial-btn');
 const writeBtnOn = document.querySelector('#write-btn-on');
-const writeBtnOff = document.querySelector('#write-btn-off');
 
 const clrPicker = document.querySelector("#clr-picker");
 

@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    padding: 2rem;
+}
+
+h1 {
+    font-family: 'Dela Gothic One', cursive;
+}
+
+#serial-btn {
+    padding: 1rem 3.2rem 1rem 3.2rem;
+    border-radius: 3px;
+    border: none;
+    background-color: rgb(83, 61, 250);
+    color: white;
+    cursor: pointer;
+}
+
+#serial-btn:hover {
+    background-color: rgb(62, 40, 226);
+}
+
+#write-btn-on {
+    padding: 0.5rem 2.3rem 0.5rem 2.3rem;
+    border-radius: 3px;
+    border: none;
+    background-color: rgb(36, 149, 5);
+    color: white;
+    cursor: pointer;
+}
+
+#write-btn-on:hover {
+    background-color: rgb(29, 118, 4);
+}
