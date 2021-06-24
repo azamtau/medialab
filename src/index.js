@@ -119,7 +119,7 @@ const sketch = (s) => {
         let c = img.get(s.int(x*tileSize), s.int(y*tileSize));
         let size = s.map(s.brightness(c), 0, 255, 0, 22);
         //s.fill(s.random(255), s.random(255), s.random(255));
-        s.ellipse(x*tileSize, y*tileSize, size, size);
+        //s.ellipse(x*tileSize, y*tileSize, size, size);
       }    
     }
   }
