@@ -5,6 +5,8 @@ const serialBtn = document.querySelector('#serial-btn');
 const writeBtnOn = document.querySelector('#write-btn-on');
 
 const clrPicker = document.querySelector("#clr-picker");
+const speedSlider = document.querySelector("#sp-slider");
+const sensorValH2 = document.querySelector('#sensor-val');
 
 let serialState = false;
 let port, reader, inputDone, inputStream;
@@ -19,7 +21,8 @@ writeBtnOn.addEventListener('click', () => {
   //   console.log('[SEND]', line);
   //   writer.write(line + '\n');
   // });
-  writer.write(`${255-rgb.r},${255-rgb.g},${255-rgb.b}`);
+  
+  writer.write(`${255-rgb.r},${255-rgb.g},${255-rgb.b},${speedSlider.value}`);
   writer.releaseLock();
 });
 
@@ -33,6 +36,7 @@ serialBtn.addEventListener('click', async (e) => {
         await port.open({ baudRate: 9600 });
         await connectSerial();
         serialBtn.textContent ="Close Serial";
+        serialBtn.style.background = "#000";
     }
     else {
         await disconnectSerial();
@@ -74,6 +78,7 @@ async function readLoop() {
       try {
         let obj = JSON.parse(line);
         val = obj.ptr;
+        sensorValH2.innerText = val;
       }
       catch(e) {
         console.log(e);
@@ -101,26 +106,13 @@ const sketch = (s) => {
 
   s.setup = () => {
      s.createCanvas(900, 600);
-    img = s.loadImage("/test.jpg");
+    // img = s.loadImage("/test.jpg");
   }
 
   s.draw = () => {
     s.background(255);
-    s.clear();
-    let tiles = val / 10; //s.mouseX/10;
-    let tileSize = s.width/tiles;
-      
     s.fill(0);
     s.noStroke();
-      
-    for(let x = 0; x < tiles; x++){
-      for(let y = 0; y < tiles; y++){
-        let c = img.get(s.int(x*tileSize), s.int(y*tileSize));
-        let size = s.map(s.brightness(c), 0, 255, 0, 22);
-        //s.fill(s.random(255), s.random(255), s.random(255));
-        //s.ellipse(x*tileSize, y*tileSize, size, size);
-      }    
-    }
   }
 }
 
